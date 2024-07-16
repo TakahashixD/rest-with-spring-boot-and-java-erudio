@@ -1,0 +1,1 @@
+INSERT INTO `person` VALUES (3,'diego','takahashi','No static resource person.','male');
