@@ -10,6 +10,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import br.com.takahashi.controllers.PersonController;
 import br.com.takahashi.data.vo.v1.PersonVO;
+import br.com.takahashi.exceptions.RequiredObjectIsNullException;
 import br.com.takahashi.exceptions.ResourceNotFoundException;
 import br.com.takahashi.mapper.DozerMapper;
 import br.com.takahashi.model.Person;
@@ -40,6 +41,7 @@ public class PersonService {
 	}
 	
 	public PersonVO create(PersonVO person) {
+		if(person == null) throw new RequiredObjectIsNullException();
 		logger.info("create one person");
 		var entity = DozerMapper.parseObject(person, Person.class);
 		PersonVO vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
@@ -49,6 +51,7 @@ public class PersonService {
 	
 	public PersonVO update(PersonVO person) {
 		logger.info("update one person");
+		if(person == null) throw new RequiredObjectIsNullException();	
 		var entity = personRepository.findById(person.getKey()).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 		entity.setFirstName(person.getFirstName());
 		entity.setLastName(person.getLastName());
