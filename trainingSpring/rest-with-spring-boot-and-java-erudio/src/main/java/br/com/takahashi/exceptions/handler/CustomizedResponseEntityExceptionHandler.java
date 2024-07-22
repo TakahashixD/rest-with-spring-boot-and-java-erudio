@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import br.com.takahashi.exceptions.ExceptionResponse;
+import br.com.takahashi.exceptions.InvalidJwtAuthenticationException;
 import br.com.takahashi.exceptions.RequiredObjectIsNullException;
 import br.com.takahashi.exceptions.ResourceNotFoundException;
 @RestControllerAdvice
@@ -20,16 +21,25 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 				new Date(), ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}	
+	
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public final ResponseEntity<ExceptionResponse> handleNotFoundExceptions(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(
 				new Date(), ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
 	}	
+	
 	@ExceptionHandler(RequiredObjectIsNullException.class)
 	public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(
 				new Date(), ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+	}	
+	
+	@ExceptionHandler(InvalidJwtAuthenticationException.class)
+	public final ResponseEntity<ExceptionResponse> handleInvalidJwtAuthenticationException(Exception ex, WebRequest request){
+		ExceptionResponse exceptionResponse = new ExceptionResponse(
+				new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
 	}	
 }
