@@ -35,7 +35,7 @@ public class JwtTokenProvider {
 	private long validityInMilliseconds = 3600000; //1h
 	
 	@Autowired
-	private UserDetailsService userDetailsService;
+	UserDetailsService userDetailsService;
 	
 	Algorithm algorithm = null;
 	

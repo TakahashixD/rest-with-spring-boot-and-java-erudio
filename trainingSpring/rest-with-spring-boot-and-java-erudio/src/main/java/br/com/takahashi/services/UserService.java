@@ -1,6 +1,5 @@
 package br.com.takahashi.services;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ public class UserService implements UserDetailsService{
 	
 	@Autowired
 	UserRepository userRepository;
-	
 	
 	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
