@@ -9,6 +9,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.dozermapper.core.Mapping;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 @JsonPropertyOrder({"id", "firstName", "lastName", "address", "gender"} )
 public class PersonVO extends RepresentationModel<PersonVO> implements Serializable {
 
