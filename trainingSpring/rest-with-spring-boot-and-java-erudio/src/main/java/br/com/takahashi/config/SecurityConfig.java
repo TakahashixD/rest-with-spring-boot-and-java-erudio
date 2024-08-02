@@ -1,8 +1,8 @@
 package br.com.takahashi.config;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +11,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,7 +32,7 @@ public class SecurityConfig {
 	
 	@Bean
 	PasswordEncoder passwordEncoder() {
-		Map<String, PasswordEncoder> encoders = new HashedMap();
+		Map<String, PasswordEncoder> encoders = new HashMap<>();
 		encoders.put("pbkdf2", new Pbkdf2PasswordEncoder("", 8, 185000, SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256));
 		DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
 		passwordEncoder.setDefaultPasswordEncoderForMatches(new Pbkdf2PasswordEncoder("", 8, 185000, SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256));
@@ -46,19 +47,20 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		JwtTokenFilter customFilter = new JwtTokenFilter(tokenProvider);
-		return http
+		http
 				.httpBasic(httpB -> httpB.disable())
-				.csrf(csrf -> csrf.disable())
+				.csrf(AbstractHttpConfigurer::disable)
 				.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(
 						authorizeHttpRequests -> authorizeHttpRequests
 							.requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-							.requestMatchers("/api/v1/**").authenticated()
-							.requestMatchers("/users/").denyAll()
+							.requestMatchers("/api/**").authenticated()
+							.requestMatchers("/users").denyAll()
 						)
-				.cors(Customizer.withDefaults())
-				.build();
+				.cors(Customizer.withDefaults());
+		
+		return http.build();
 						
 	}
 }
